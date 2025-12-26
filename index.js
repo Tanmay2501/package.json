@@ -43,6 +43,41 @@ function getSheetsClient() {
 
   return google.sheets({ version: "v4", auth });
 }
+app.post("/call_tool", async (req, res) => {
+  try {
+    const { tool, input } = req.body;
+
+    if (tool !== "export_to_sheet") {
+      return res.status(400).json({ error: "Unknown tool" });
+    }
+
+    const rows = input.rows;
+
+    if (!Array.isArray(rows)) {
+      return res.status(400).json({ error: "rows must be an array" });
+    }
+
+    const sheets = getSheetsClient();
+
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: process.env.SHEET_ID,
+      range: "Sheet1",
+      valueInputOption: "RAW",
+      requestBody: {
+        values: rows
+      }
+    });
+
+    res.json({
+      status: "success",
+      appendedRows: rows.length
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 
 const PORT = process.env.PORT || 3000;
