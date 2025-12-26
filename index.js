@@ -18,7 +18,7 @@ app.get("/mcp", (req, res) => {
           properties: {
             rows: {
               type: "array",
-              description: "Array of rows to append to the sheet",
+              description: "Array of rows to append to the sheet"
             }
           },
           required: ["rows"]
