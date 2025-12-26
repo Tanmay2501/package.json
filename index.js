@@ -29,6 +29,21 @@ app.get("/mcp", (req, res) => {
     ]
   });
 });
+const { google } = require("googleapis");
+
+function getSheetsClient() {
+  const key = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT);
+
+  const auth = new google.auth.JWT(
+    key.client_email,
+    null,
+    key.private_key,
+    ["https://www.googleapis.com/auth/spreadsheets"]
+  );
+
+  return google.sheets({ version: "v4", auth });
+}
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
